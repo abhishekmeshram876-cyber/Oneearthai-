@@ -1,0 +1,155 @@
+one-earth-ai/
+│
+├── index.html
+├── style.css
+├── app.js
+│
+├── api/
+│   └── solve.js
+│
+├── .env.example
+├── .gitignore
+├── README.md
+└── LICENSE<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Earth AI 🌍</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 One Earth AI</h1>
+    <p>Your Global Problem Solver</p>
+
+    <textarea id="userInput" placeholder="Type your problem here... (Health, Money, Study, Job, Relationship)"></textarea>
+    <button id="solveBtn">Get Solution</button>
+
+    <div id="output"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>body {
+  background: linear-gradient(135deg, #0a0f24, #1f1f3a);
+  color: white;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  margin-top: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  resize: none;
+  font-size: 16px;
+}
+
+button {
+  background: #00c8ff;
+  border: none;
+  padding: 12px 25px;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 18px;
+}
+
+button:hover {
+  background: #0077ff;
+}
+
+#output {
+  margin-top: 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  min-height: 100px;
+}document.getElementById("solveBtn").addEventListener("click", async () => {
+  const input = document.getElementById("userInput").value.trim();
+  const outputDiv = document.getElementById("output");
+
+  if (!input) {
+    outputDiv.innerHTML = "<p>Please type your problem first.</p>";
+    return;
+  }
+
+  outputDiv.innerHTML = "<p>⏳ Thinking...</p>";
+
+  try {
+    const res = await fetch("/api/solve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: input }),
+    });
+    const data = await res.json();
+    outputDiv.innerHTML = `<p>${data.answer}</p>`;
+  } catch (err) {
+    outputDiv.innerHTML = "<p>⚠️ Something went wrong. Please try again.</p>";
+  }
+});import OpenAI from "openai";
+
+export default async function handler(req, res) {
+  try {
+    const { prompt } = req.body;
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are One Earth AI, a global helper that gives practical, positive, and kind solutions for human life problems.",
+        },
+        { role: "user", content: prompt },
+      ],
+    });
+
+    const answer = completion.choices[0].message.content;
+    res.status(200).json({ answer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}OPENAI_API_KEY=your_openai_api_key_herenode_modules/
+.env# 🌍 One Earth AI
+
+One Earth AI is a free global platform that provides instant, personal, and actionable solutions to any life problem — Health, Money, Study, Job, Relationship & more.
+
+### 🚀 How to Use
+1. Type your problem
+2. Click “Get Solution”
+3. Instantly receive a personalized answer powered by AI
+
+Built with ❤️ using OpenAI + JavaScript + VercelMIT License
+
+Copyright (c) 2025
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
